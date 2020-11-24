@@ -1,0 +1,55 @@
+﻿  Pacman.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector(626): warning C4251: 'std::_Vector_alloc<std::_Vec_base_types<_Ty,_Alloc>>::_Mypair': class 'std::_Compressed_pair<std::allocator<_Ty>,std::_Vector_val<std::_Simple_types<_Ty>>,true>' needs to have dll-interface to be used by clients of class 'std::_Vector_alloc<std::_Vec_base_types<_Ty,_Alloc>>'
+          with
+          [
+              _Ty=S2D::Input::Keys,
+              _Alloc=std::allocator<S2D::Input::Keys>
+          ]
+          and
+          [
+              _Ty=S2D::Input::Keys
+          ]
+          and
+          [
+              _Ty=S2D::Input::Keys,
+              _Alloc=std::allocator<S2D::Input::Keys>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector(605): note: see declaration of 'std::_Compressed_pair<std::allocator<_Ty>,std::_Vector_val<std::_Simple_types<_Ty>>,true>'
+          with
+          [
+              _Ty=S2D::Input::Keys
+          ]
+  c:\users\owner\downloads\pacman\pacman\s2d\input.h(108): note: see reference to class template instantiation 'std::vector<S2D::Input::Keys,std::allocator<_Ty>>' being compiled
+          with
+          [
+              _Ty=S2D::Input::Keys
+          ]
+c:\users\owner\downloads\pacman\pacman\pacman.h(86): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(9): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(43): warning C4018: '<': signed/unsigned mismatch
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(49): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(54): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(75): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(82): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(83): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(94): warning C4018: '<': signed/unsigned mismatch
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(98): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(112): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(117): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(185): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(184): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(199): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(200): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(302): warning C4018: '<': signed/unsigned mismatch
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(357): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(358): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(359): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(360): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(365): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(366): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(367): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(368): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(384): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.cpp(388): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\downloads\pacman\pacman\pacman.h(71): warning C4715: 'Pacman::getYPosFromDirection': not all control paths return a value
+  Pacman.vcxproj -> C:\Users\Owner\Downloads\Pacman\Debug\Pacman.exe
