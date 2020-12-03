@@ -7,8 +7,9 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 #endif
-#define MUNCHIECOUNT 10
+#define MUNCHIECOUNT 20
 #define GHOSTCOUNT 2
+#define WALLCOUNT 46
 // Just need to include main header file
 #include "S2D/S2D.h"
 
@@ -35,6 +36,9 @@ public:
 
 	/// <summary> Called every frame - draw game here. </summary>
 	void virtual Draw(int elapsedTime);
+	void virtual DrawGame(int elapsedTime);
+	void virtual DrawMenu(int elapsedTime);
+	void virtual DrawScores(int elapsedTime);
 
 	enum Direction {
 		UP, DOWN, LEFT, RIGHT
@@ -72,6 +76,8 @@ public:
 private:
 	//Input methods
 	void Input(int elapsedTime, Input::KeyboardState* state, Input::MouseState*);
+	void InputGame(int elapsedTime, Input::KeyboardState* state, Input::MouseState*);
+	void InputMenu(int elapsedTime, Input::KeyboardState* state, Input::MouseState*);
 
 	//Check methods
 	void CheckViewportCollision();
@@ -80,6 +86,13 @@ private:
 	//Update methods
 	void UpdatePacman(int elapsedTime);
 	void UpdateMunchie(int elapsedTime);
+
+	// Menu
+	Texture2D* _menuBackground;
+	Rect* _menuSpriteBounds;
+	Vector2* _menuStringPosition;
+	Vector2* _pauseMenuStringPosition;
+	bool _paused, _pKeyDown;
 
 	// Data to represent Pacman
 	struct PacCharacter {
@@ -94,15 +107,17 @@ private:
 	};
 
 	PacCharacter* _ourPac;
-	Texture2D* _wallTexture;
+	bool MovePac(int x, int y);
 
 	int _frameCount;
 
 	// Data to represent Munchie
 	struct Enemy {
+		int _frameCount;
 		Rect* _position;
 		Rect* _sourceRect;
 		Texture2D* _texture;
+
 		~Enemy() {
 			delete _position;
 			delete _sourceRect;
@@ -118,6 +133,7 @@ private:
 		Texture2D* _texture;
 		int direction;
 		double speed;
+
 		~MovingEnemy() {
 			delete _position;
 			delete _sourceRect;
@@ -132,13 +148,6 @@ private:
 	// Position for String
 	Vector2* _debugStringPosition;
 
-	// Menu
-	Texture2D* _menuBackground;
-	Rect* _menuSpriteBounds;
-	Vector2* _menuStringPosition;
-	bool _paused, _pKeyDown;
-	bool _atMenu;
-
 	Texture2D* _gameOverTexture;
 	Vector2* _gameOverPos;
 	Vector2* _gameOverStringPos;
@@ -146,4 +155,53 @@ private:
 
 	SoundEffect* _pog;
 	SoundEffect* _nom;
+	SoundEffect* _death;
+
+	struct Button {
+		string text;
+		Vector2* textPos;
+		Vector2* buttonPos;
+		Rect* sourceRect;
+		const S2D::Color* col;
+
+		Button(string display, int x, int y, int width, int height, const S2D::Color* colour)
+		{
+			text = display;
+			sourceRect = new Rect(0, 0, width, height);
+			buttonPos = new Vector2(x, y-height + (height/6));
+			textPos = new Vector2(x, y);
+			col = colour;
+		}
+
+		~Button() {
+			delete textPos;
+			delete buttonPos;
+			delete sourceRect;
+		}
+	};
+	Texture2D* _buttonTexture;
+	void DrawButton(Button* button);
+
+	Button* _startGame;
+	Button* _toMenu;
+
+
+
+	struct Wall {
+		Vector2* _position;
+		Rect* _sourceRect;
+
+		Wall(int x, int y, int width, int height)
+		{
+			_sourceRect = new Rect(0, 0, width, height);
+			_position = new Vector2(x, y);
+		}
+
+		~Wall() {
+			delete _position;
+			delete _sourceRect;
+		}
+	};
+	Texture2D* _wallTexture;
+	Wall* _walls[WALLCOUNT];
 };
