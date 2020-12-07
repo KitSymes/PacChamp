@@ -10,6 +10,7 @@
 #define MUNCHIECOUNT 20
 #define GHOSTCOUNT 2
 #define WALLCOUNT 46
+#define SEQUENCECOUNT 12
 // Just need to include main header file
 #include "S2D/S2D.h"
 
@@ -41,7 +42,7 @@ public:
 	void virtual DrawScores(int elapsedTime);
 
 	enum Direction {
-		UP, DOWN, LEFT, RIGHT
+		UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3
 	};
 
 	float getRotationFromDirection(Direction dir) // TODO Messes up sprite drawn position, make spritesheet instead
@@ -75,34 +76,56 @@ public:
 	}
 private:
 	//Input methods
-	void Input(int elapsedTime, Input::KeyboardState* state, Input::MouseState*);
-	void InputGame(int elapsedTime, Input::KeyboardState* state, Input::MouseState*);
-	void InputMenu(int elapsedTime, Input::KeyboardState* state, Input::MouseState*);
+	void Input(int elapsedTime, Input::KeyboardState* state, Input::MouseState* mouseState);
+	void InputGame(int elapsedTime, Input::KeyboardState* state, Input::MouseState* mouseState);
+	void InputMenu(int elapsedTime, Input::KeyboardState* state, Input::MouseState* mouseState);
+	void InputScoresMenu(int elapsedTime, Input::KeyboardState* state, Input::MouseState* mouseState);
 
 	//Check methods
-	void CheckViewportCollision();
+	//void CheckViewportCollision();
 	bool CollisionCheck(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2);
 
 	//Update methods
 	void UpdatePacman(int elapsedTime);
-	void UpdateMunchie(int elapsedTime);
+	//void UpdateMunchie(int elapsedTime);
 
 	// Menu
 	Texture2D* _menuBackground;
 	Rect* _menuSpriteBounds;
 	Vector2* _menuStringPosition;
 	Vector2* _pauseMenuStringPosition;
+	Vector2* _scoresMenuStringPosition;
 	bool _paused, _pKeyDown;
+
+	void UpdateMenuPacman();
+	struct MenuSequence
+	{
+		MenuSequence* next;
+		Direction dir;
+		Rect* posAndSize;
+
+		MenuSequence(Direction dir, Rect* posAndSize)
+		{
+			this->dir = dir;
+			this->posAndSize = posAndSize;
+		}
+
+		~MenuSequence()
+		{
+			delete posAndSize;
+		}
+	};
+	MenuSequence* _sequence[SEQUENCECOUNT];
 
 	// Data to represent Pacman
 	struct PacCharacter {
-		float _pacmanSpeed = 0.4;
-		float _speedMulti = 1.0;
-		Direction dir = RIGHT;
+		float _speed = 4.0f;
+		float _speedMulti = 1.0f;
+		Direction _direction = RIGHT;
 		int frame = 0;
-		Rect* _pacmanSourceRect;
-		Texture2D* _pacmanTexture;
-		Vector2* _pacmanPosition;
+		Rect* _sourceRect;
+		Texture2D* _texture;
+		Vector2* _position;
 		bool dead;
 	};
 
@@ -128,11 +151,12 @@ private:
 	Enemy* _cherry;
 
 	struct MovingEnemy {
+		int _id;
 		Rect* _position;
 		Rect* _sourceRect;
 		Texture2D* _texture;
-		int direction;
-		double speed;
+		Direction _direction;
+		double _speed = 4.0f;
 
 		~MovingEnemy() {
 			delete _position;
@@ -144,6 +168,7 @@ private:
 	MovingEnemy* _ghosts[GHOSTCOUNT];
 	void CheckGhostCollisions();
 	void UpdateGhost(MovingEnemy* ghost, int elapsedTime);
+	bool MoveGhost(MovingEnemy* ghost, int x, int y);
 
 	// Position for String
 	Vector2* _debugStringPosition;
@@ -183,9 +208,8 @@ private:
 	void DrawButton(Button* button);
 
 	Button* _startGame;
+	Button* _scoreScreen;
 	Button* _toMenu;
-
-
 
 	struct Wall {
 		Vector2* _position;
