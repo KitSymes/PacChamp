@@ -8,11 +8,13 @@ enum State {
 	Menu, InGame, ScoresMenu
 };
 
+int menuPacSequence = 0;
 int score = 0;
 int scores[10];
 string scoreNames[10];
 int scoresStringY;
 State stage = Menu;
+bool ghostFirstBump = true;
 
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv)
 {
@@ -132,14 +134,14 @@ void Pacman::LoadContent()
 	_gameOverTexture->Load("Textures/GameOver.png", false);
 	_gameOverSource = new Rect(0, 0, 64, 64);
 	_gameOverPos = new Vector2(Graphics::GetViewportWidth() / 2 - 32, Graphics::GetViewportHeight() / 2 - 100);
-	_gameOverStringPos = new Vector2(Graphics::GetViewportWidth() / 2 - 39, Graphics::GetViewportHeight() / 2);
+	_gameOverStringPos = new Vector2(Graphics::GetViewportWidth() / 2 - 39, Graphics::GetViewportHeight() / 2 - 20);
 
 	// Load Pacman
 	_ourPac->_texture = new Texture2D();
 	_ourPac->_texture->Load("Textures/Pacman.tga", false);
-	_ourPac->_position = new Vector2(0.0f, 350.0f);
+	//_ourPac->_position = new Vector2(0.0f, 350.0f);
 	_ourPac->_sourceRect = new Rect(0.0f, 0.0f, 32.0f, 32.0f);
-	_ourPac->_direction = RIGHT;
+	//_ourPac->_direction = RIGHT;
 
 	// Load Walls
 	_wallTexture = new Texture2D();
@@ -227,6 +229,136 @@ void Pacman::LoadContent()
 		_munchies[i]->_frameCount = rand() % 20;
 		_munchies[i]->_texture = munchieTex;
 		_munchies[i]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
+		/*_munchies[i]->_position = new Rect(32 * (rand() % 32), 32 * (rand() % 24), 32, 32);
+		bool ok = false;
+		while (!ok)
+		{
+			ok = true;
+			for (int w = 0; w < WALLCOUNT; w++)
+			{
+				if (_walls[w] == nullptr) continue;
+				ok = !CollisionCheck(_munchies[i]->_position->X + 8, _munchies[i]->_position->Y + 8, _munchies[i]->_sourceRect->Width - 16, _munchies[i]->_sourceRect->Height - 16,
+					_walls[w]->_position->X, _walls[w]->_position->Y, _walls[w]->_sourceRect->Width, _walls[w]->_sourceRect->Height);
+
+				if (!ok) break;
+
+				for (int m = 0; m < i; m++)
+				{
+					ok = !CollisionCheck(_munchies[i]->_position->X, _munchies[i]->_position->Y, _munchies[i]->_sourceRect->Width, _munchies[i]->_sourceRect->Height,
+						_munchies[m]->_position->X, _munchies[m]->_position->Y, _munchies[m]->_sourceRect->Width, _munchies[m]->_sourceRect->Height);
+
+					if (!ok) break;
+				}
+
+				if (!ok) break;
+			}
+
+			if (!ok)
+			{
+				_munchies[i]->_position->X = 32 * (rand() % 32);
+				_munchies[i]->_position->Y = 32 * (rand() % 24);
+			}
+		}*/
+	}
+
+	// Load Cherry
+	_cherry = new Enemy();
+	_cherry->_texture = new Texture2D();
+	_cherry->_texture->Load("Textures/Cherry.png", false);
+	_cherry->_position = new Rect(-10, -10, 32, 32);
+	_cherry->_sourceRect = new Rect(0, 0, 64, 64);
+
+	// Load Ghosts
+	_ghosts[0]->_texture = new Texture2D();
+	_ghosts[0]->_texture->Load("Textures/GhostBlue.png", false);
+	//_ghosts[0]->_position = new Rect(rand() % Graphics::GetViewportWidth(), rand() % Graphics::GetViewportHeight(), 32, 32);
+	_ghosts[0]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
+	/*_ghosts[0]->_direction = LEFT;
+	{
+		bool ok = false;
+		while (!ok)
+		{
+			ok = true;
+			for (int w = 0; w < WALLCOUNT; w++)
+			{
+				if (_walls[w] == nullptr) continue;
+				ok = !CollisionCheck(_ghosts[0]->_position->X, _ghosts[0]->_position->Y, _ghosts[0]->_sourceRect->Width, _ghosts[0]->_sourceRect->Height,
+					_walls[w]->_position->X, _walls[w]->_position->Y, _walls[w]->_sourceRect->Width, _walls[w]->_sourceRect->Height);
+				if (!ok) break;
+			}
+
+			if (!ok)
+			{
+				_ghosts[0]->_position->X = rand() % (Graphics::GetViewportWidth());
+				_ghosts[0]->_position->Y = rand() % (Graphics::GetViewportHeight());
+			}
+		}
+	}*/
+
+	_ghosts[1]->_texture = new Texture2D();
+	_ghosts[1]->_texture->Load("Textures/GhostGrayscale.png", false);
+	//_ghosts[1]->_position = new Rect(32 * 16, 32 * 11, 32, 32);
+	_ghosts[1]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
+	//_ghosts[1]->_direction = UP;
+
+	// Set string position
+	_debugStringPosition = new Vector2(10.0f, 25.0f);
+
+	// Load Sound Effects
+	_pog = new SoundEffect();
+	_pog->Load("Sounds/pog.wav");
+	_nom = new SoundEffect();
+	_nom->Load("Sounds/nom.wav");
+	_death = new SoundEffect();
+	_death->Load("Sounds/death.wav");
+
+	// Load Buttons
+	_buttonTexture = new Texture2D();
+	_buttonTexture->Load("Textures/Button.png", false);
+
+	_startGame = new Button("Start", Graphics::GetViewportWidth() / 2 - 20, Graphics::GetViewportHeight() / 2 - 5, 41, 20, Color::Yellow);
+	_scoreScreen = new Button("Scores", Graphics::GetViewportWidth() / 2 - 29, Graphics::GetViewportHeight() / 2 + 25, 59, 20, Color::Yellow);
+	_toMenu = new Button("Back", Graphics::GetViewportWidth() / 2 - 21, Graphics::GetViewportHeight() / 2 + 20, 42, 20, Color::Yellow);
+
+	ResetMap();
+}
+
+void Pacman::ResetMap()
+{
+	menuPacSequence = 0;
+	score = 0;
+
+	_ourPac->_position = new Vector2(0.0f, 350.0f);
+	_ourPac->_direction = RIGHT;
+
+	_ghosts[0]->_position = new Rect(rand() % Graphics::GetViewportWidth(), rand() % (Graphics::GetViewportHeight() - 128) + 64, 32, 32);
+	_ghosts[0]->_direction = LEFT;
+	/*{
+		bool ok = false;
+		while (!ok)
+		{
+			ok = true;
+			for (int w = 0; w < WALLCOUNT; w++)
+			{
+				if (_walls[w] == nullptr) continue;
+				ok = !CollisionCheck(_ghosts[0]->_position->X, _ghosts[0]->_position->Y, _ghosts[0]->_sourceRect->Width, _ghosts[0]->_sourceRect->Height,
+					_walls[w]->_position->X, _walls[w]->_position->Y, _walls[w]->_sourceRect->Width, _walls[w]->_sourceRect->Height);
+				if (!ok) break;
+			}
+
+			if (!ok)
+			{
+				_ghosts[0]->_position->X = rand() % (Graphics::GetViewportWidth());
+				_ghosts[0]->_position->Y = rand() % (Graphics::GetViewportHeight());
+			}
+		}
+	}*/
+	_ghosts[1]->_position = new Rect(32 * 16, 32 * 11, 32, 32);
+	_ghosts[1]->_direction = UP;
+	ghostFirstBump = true;
+
+	for (int i = 0; i < MUNCHIECOUNT; i++)
+	{
 		_munchies[i]->_position = new Rect(32 * (rand() % 32), 32 * (rand() % 24), 32, 32);
 		bool ok = false;
 		while (!ok)
@@ -258,65 +390,6 @@ void Pacman::LoadContent()
 			}
 		}
 	}
-
-	// Load Cherry
-	_cherry = new Enemy();
-	_cherry->_texture = new Texture2D();
-	_cherry->_texture->Load("Textures/Cherry.png", false);
-	_cherry->_position = new Rect(-10, -10, 32, 32);
-	_cherry->_sourceRect = new Rect(0, 0, 64, 64);
-
-	// Load Ghosts
-	_ghosts[0]->_texture = new Texture2D();
-	_ghosts[0]->_texture->Load("Textures/GhostBlue.png", false);
-	_ghosts[0]->_position = new Rect(rand() % Graphics::GetViewportWidth(), rand() % Graphics::GetViewportHeight(), 32, 32);
-	_ghosts[0]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
-	_ghosts[0]->_direction = LEFT;
-	{
-		bool ok = false;
-		while (!ok)
-		{
-			ok = true;
-			for (int w = 0; w < WALLCOUNT; w++)
-			{
-				if (_walls[w] == nullptr) continue;
-				ok = !CollisionCheck(_ghosts[0]->_position->X, _ghosts[0]->_position->Y, _ghosts[0]->_sourceRect->Width, _ghosts[0]->_sourceRect->Height,
-					_walls[w]->_position->X, _walls[w]->_position->Y, _walls[w]->_sourceRect->Width, _walls[w]->_sourceRect->Height);
-				if (!ok) break;
-			}
-
-			if (!ok)
-			{
-				_ghosts[0]->_position->X = rand() % (Graphics::GetViewportWidth());
-				_ghosts[0]->_position->Y = rand() % (Graphics::GetViewportHeight());
-			}
-		}
-	}
-
-	_ghosts[1]->_texture = new Texture2D();
-	_ghosts[1]->_texture->Load("Textures/GhostGrayscale.png", false);
-	_ghosts[1]->_position = new Rect(32 * 16, 32 * 11, 32, 32);
-	_ghosts[1]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
-	_ghosts[1]->_direction = UP;
-
-	// Set string position
-	_debugStringPosition = new Vector2(10.0f, 25.0f);
-
-	// Load Sound Effects
-	_pog = new SoundEffect();
-	_pog->Load("Sounds/pog.wav");
-	_nom = new SoundEffect();
-	_nom->Load("Sounds/nom.wav");
-	_death = new SoundEffect();
-	_death->Load("Sounds/death.wav");
-
-	// Load Buttons
-	_buttonTexture = new Texture2D();
-	_buttonTexture->Load("Textures/Button.png", false);
-
-	_startGame = new Button("Start", Graphics::GetViewportWidth() / 2 - 20, Graphics::GetViewportHeight() / 2 - 5, 41, 20, Color::Yellow);
-	_scoreScreen = new Button("Scores", Graphics::GetViewportWidth() / 2 - 29, Graphics::GetViewportHeight() / 2 + 25, 59, 20, Color::Yellow);
-	_toMenu = new Button("Back", Graphics::GetViewportWidth() / 2 - 21, Graphics::GetViewportHeight() / 2 + 20, 42, 20, Color::Yellow);
 }
 
 bool wDown, aDown, sDown, dDown, moving, animate = false, trymove = false, clicked = false;
@@ -367,7 +440,7 @@ void Pacman::Update(int elapsedTime)
 
 		for (int i = 0; i < MUNCHIECOUNT; i++)
 		{
-			if (CollisionCheck(_ourPac->_position->X, _ourPac->_position->Y, _ourPac->_sourceRect->Width, _ourPac->_sourceRect->Height,
+			if (_munchies[i]->_position->X != -100 && CollisionCheck(_ourPac->_position->X, _ourPac->_position->Y, _ourPac->_sourceRect->Width, _ourPac->_sourceRect->Height,
 				_munchies[i]->_position->X, _munchies[i]->_position->Y, _munchies[i]->_sourceRect->Width, _munchies[i]->_sourceRect->Height)) {
 				_munchies[i]->_position->X = -100;
 				score += 100;
@@ -398,10 +471,25 @@ void Pacman::Input(int elapsedTime, Input::KeyboardState* keyboardState, Input::
 	}
 }
 
-void Pacman::InputGame(int elapsedTime, Input::KeyboardState* keyboardState, Input::MouseState* mouseState) {// Handle Mouse Input – Reposition Cherry 
-
+void Pacman::InputGame(int elapsedTime, Input::KeyboardState* keyboardState, Input::MouseState* mouseState) // Handle Mouse Input – Reposition Cherry 
+{
 	if (_ourPac->dead)
+	{
+		if (!clicked) {
+			if (mouseState->LeftButton == Input::ButtonState::PRESSED)
+			{
+				clicked = true;
+				if (CollisionCheck(mouseState->X, mouseState->Y, 1, 1,
+					_toMenu->buttonPos->X, _toMenu->buttonPos->Y, _toMenu->sourceRect->Width, _toMenu->sourceRect->Height)) {
+					stage = Menu;
+					ResetMap();
+				}
+			}
+		}
+		else if (mouseState->LeftButton == Input::ButtonState::RELEASED)
+			clicked = false;
 		return;
+	}
 
 	if (mouseState->LeftButton == Input::ButtonState::PRESSED) // Moves Cherry
 	{
@@ -466,7 +554,7 @@ void Pacman::InputGame(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 void Pacman::InputMenu(int elapsedTime, Input::KeyboardState* keyboardState, Input::MouseState* mouseState) {
 
 	if (!clicked) {
-		if (mouseState->LeftButton == Input::ButtonState::PRESSED) // Moves Cherry
+		if (mouseState->LeftButton == Input::ButtonState::PRESSED)
 		{
 			clicked = true;
 			if (CollisionCheck(mouseState->X, mouseState->Y, 1, 1,
@@ -514,7 +602,7 @@ void Pacman::InputMenu(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 void Pacman::InputScoresMenu(int elapsedTime, Input::KeyboardState* state, Input::MouseState* mouseState)
 {
 	if (!clicked) {
-		if (mouseState->LeftButton == Input::ButtonState::PRESSED) // Moves Cherry
+		if (mouseState->LeftButton == Input::ButtonState::PRESSED)
 		{
 			clicked = true;
 			if (CollisionCheck(mouseState->X, mouseState->Y, 1, 1,
@@ -581,7 +669,6 @@ void Pacman::UpdatePacman(int elapsedTime)
 		_ourPac->_position->Y = -20;
 }
 
-int seq = 0;
 void Pacman::UpdateMenuPacman()
 {
 	switch (_ourPac->_direction)
@@ -608,15 +695,15 @@ void Pacman::UpdateMenuPacman()
 	int bottom1 = _ourPac->_position->Y + _ourPac->_sourceRect->Height;
 	int top2 = 0, bottom2 = 0, left2 = 0, right2 = 0;
 
-	bottom2 = _sequence[seq]->posAndSize->Y + _sequence[seq]->posAndSize->Height;
-	left2 = _sequence[seq]->posAndSize->X;
-	right2 = _sequence[seq]->posAndSize->X + _sequence[seq]->posAndSize->Width;
-	top2 = _sequence[seq]->posAndSize->Y;
+	bottom2 = _sequence[menuPacSequence]->posAndSize->Y + _sequence[menuPacSequence]->posAndSize->Height;
+	left2 = _sequence[menuPacSequence]->posAndSize->X;
+	right2 = _sequence[menuPacSequence]->posAndSize->X + _sequence[menuPacSequence]->posAndSize->Width;
+	top2 = _sequence[menuPacSequence]->posAndSize->Y;
 
 	if ((bottom1 > top2 && (top1 < bottom2) && (right1 > left2) && (left1 < right2)))
 	{
-		_ourPac->_direction = _sequence[seq]->dir;
-		seq = (seq + 1) % SEQUENCECOUNT;
+		_ourPac->_direction = _sequence[menuPacSequence]->dir;
+		menuPacSequence = (menuPacSequence + 1) % SEQUENCECOUNT;
 	}
 
 	if (_ourPac->_position->X < -22)
@@ -686,6 +773,7 @@ void Pacman::DrawGame(int elapsedTime)
 
 	for (int i = 0; i < MUNCHIECOUNT; i++)
 	{
+		if (_munchies[i]->_position->X == -100) continue;
 		_munchies[i]->_frameCount++;
 		_munchies[i]->_sourceRect->X = (_munchies[i]->_frameCount % 10 >= 5 ? 32.0f : 0.0f); // Animates Munchie
 		SpriteBatch::Draw(_munchies[i]->_texture, _munchies[i]->_position, _munchies[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Munchie
@@ -694,8 +782,11 @@ void Pacman::DrawGame(int elapsedTime)
 	SpriteBatch::Draw(_cherry->_texture, _cherry->_position, _cherry->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Cherry
 
 	for (int i = 0; i < GHOSTCOUNT; i++)
-		SpriteBatch::Draw(_ghosts[i]->_texture, _ghosts[i]->_position, _ghosts[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, (_ghosts[i]->_direction == 0 ? SpriteEffect::NONE : SpriteEffect::FLIPHORIZONTAL)); // Draws Ghost
-
+	{
+		_ghosts[i]->_sourceRect->X = (_frameCount % 5 >= 2 ? 32.0f : 0.0f);
+		_ghosts[i]->_sourceRect->Y = (_ghosts[i]->_direction == UP || _ghosts[i]->_direction == DOWN ? 32.0f : 0.0f);
+		SpriteBatch::Draw(_ghosts[i]->_texture, _ghosts[i]->_position, _ghosts[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, (_ghosts[i]->_direction == LEFT ? SpriteEffect::FLIPHORIZONTAL : (_ghosts[i]->_direction == UP ? SpriteEffect::FLIPVERTICAL : SpriteEffect::NONE))); // Draws Ghost
+	}
 	if (!_ourPac->dead)
 	{
 		_ourPac->_sourceRect->Y = getYPosFromDirection(_ourPac->_direction);
@@ -705,6 +796,7 @@ void Pacman::DrawGame(int elapsedTime)
 	}
 	else
 	{
+		DrawButton(_toMenu);
 		SpriteBatch::Draw(_gameOverTexture, _gameOverPos, _gameOverSource, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
 		SpriteBatch::DrawString("You Died", _gameOverStringPos, Color::Red);
 	}
@@ -860,7 +952,13 @@ void Pacman::UpdateGhost(MovingEnemy* ghost, int elapsedTime)
 			break;
 		}
 		if (!moved)
-			ghost->_direction = Direction(rand() % 4);
+			if (ghostFirstBump)
+			{
+				ghost->_direction = LEFT;
+				ghostFirstBump = false;
+			}
+			else
+				ghost->_direction = Direction(rand() % 4);
 		break;
 	default:
 		break;

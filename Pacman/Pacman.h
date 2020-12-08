@@ -87,6 +87,7 @@ private:
 
 	//Update methods
 	void UpdatePacman(int elapsedTime);
+	void ResetMap();
 	//void UpdateMunchie(int elapsedTime);
 
 	// Menu
