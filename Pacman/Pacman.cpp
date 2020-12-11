@@ -10,11 +10,10 @@ enum State {
 
 int menuPacSequence = 0;
 int score = 0;
-int scores[10];
-string scoreNames[10];
 int scoresStringY;
 State stage = Menu;
-bool ghostFirstBump = true;
+bool keysPressed[26], backspace;
+string name;
 
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv)
 {
@@ -27,7 +26,6 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv)
 	for (int i = 0; i < GHOSTCOUNT; i++) {
 		_ghosts[i] = new MovingEnemy();
 		_ghosts[i]->_id = i;
-		//_ghosts[i]->direction = 0;
 	}
 
 	//Initialise important Game aspects
@@ -41,7 +39,6 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv)
 
 Pacman::~Pacman()
 {
-
 	// Delete Menu Stuff
 	delete _menuBackground;
 	delete _menuSpriteBounds;
@@ -52,6 +49,10 @@ Pacman::~Pacman()
 	for (int i = 0; i < SEQUENCECOUNT; i++)
 		delete _sequence[i];
 	delete[] _sequence;
+
+	for (int i = 0; i < PATROLSEQUENCECOUNT; i++)
+		delete _patrolSequence[i];
+	delete[] _patrolSequence;
 
 	// Delete PacChamp
 	delete _ourPac->_texture;
@@ -64,11 +65,7 @@ Pacman::~Pacman()
 	// Delete Munchies
 	delete _munchies[0]->_texture;
 	for (int i = 0; i < size(_munchies); i++)
-	{
-		//delete _munchies[i]->_sourceRect; Moved to deconstructor
-		//delete _munchies[i]->_rect;
 		delete _munchies[i];
-	}
 	delete[] _munchies;
 
 	// Delete Ghosts
@@ -84,6 +81,7 @@ Pacman::~Pacman()
 	delete _gameOverSource;
 	delete _gameOverPos;
 	delete _gameOverStringPos;
+	delete _gameOverNamePos;
 
 	// Delete Sound Effects
 	delete _pog;
@@ -113,112 +111,115 @@ void Pacman::LoadContent()
 	scoresStringY = Graphics::GetViewportHeight() / 2.0f - 10.0f;
 	_scoresMenuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 88, scoresStringY);
 	_pauseMenuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 88, Graphics::GetViewportHeight() / 2.0f);
-	_sequence[0] = new MenuSequence(Direction::DOWN, new Rect(32 * 7.9, 32 * 11, 32, 32));
-	_sequence[1] = new MenuSequence(Direction::RIGHT, new Rect(32 * 7, 32 * 16.9, 32, 32));
-	_sequence[2] = new MenuSequence(Direction::DOWN, new Rect(32 * 14.9, 32 * 16, 32, 32));
-	_sequence[3] = new MenuSequence(Direction::RIGHT, new Rect(32 * 14, 32 * 18.9, 32, 32));
-	_sequence[4] = new MenuSequence(Direction::DOWN, new Rect(32 * 22, 32 * 18, 32, 32));
-	_sequence[5] = new MenuSequence(Direction::LEFT, new Rect(32 * 21, 32 * 20.9, 32, 32));
-	_sequence[6] = new MenuSequence(Direction::DOWN, new Rect(32 * 16.1, 32 * 20, 32, 32));
-	_sequence[7] = new MenuSequence(Direction::RIGHT, new Rect(32 * 17, 32 * 22.9, 32, 32));
-	_sequence[8] = new MenuSequence(Direction::UP, new Rect(32 * 31, 32 * 22, 32, 32));
-	_sequence[9] = new MenuSequence(Direction::LEFT, new Rect(32 * 30, 32 * 19, 32, 32));
-	_sequence[10] = new MenuSequence(Direction::UP, new Rect(32 * 23.1, 32 * 20, 32, 32));
-	_sequence[11] = new MenuSequence(Direction::RIGHT, new Rect(32 * 24, 32 * 10, 32, 32));
-	for (int i = 0; i < SEQUENCECOUNT - 1; i++)
-		_sequence[i]->next = _sequence[i + 1];
-	_sequence[SEQUENCECOUNT - 1]->next = _sequence[0];
+	{
+		_sequence[0] = new MovementSequence(Direction::DOWN, new Rect(32 * 7.9, 32 * 11, 32, 32));
+		_sequence[1] = new MovementSequence(Direction::RIGHT, new Rect(32 * 7, 32 * 16.9, 32, 32));
+		_sequence[2] = new MovementSequence(Direction::DOWN, new Rect(32 * 14.9, 32 * 16, 32, 32));
+		_sequence[3] = new MovementSequence(Direction::RIGHT, new Rect(32 * 14, 32 * 18.9, 32, 32));
+		_sequence[4] = new MovementSequence(Direction::DOWN, new Rect(32 * 22, 32 * 18, 32, 32));
+		_sequence[5] = new MovementSequence(Direction::LEFT, new Rect(32 * 21, 32 * 20.9, 32, 32));
+		_sequence[6] = new MovementSequence(Direction::DOWN, new Rect(32 * 16.1, 32 * 20, 32, 32));
+		_sequence[7] = new MovementSequence(Direction::RIGHT, new Rect(32 * 17, 32 * 22.9, 32, 32));
+		_sequence[8] = new MovementSequence(Direction::UP, new Rect(32 * 31, 32 * 22, 32, 32));
+		_sequence[9] = new MovementSequence(Direction::LEFT, new Rect(32 * 30, 32 * 19, 32, 32));
+		_sequence[10] = new MovementSequence(Direction::UP, new Rect(32 * 23.1, 32 * 20, 32, 32));
+		_sequence[11] = new MovementSequence(Direction::RIGHT, new Rect(32 * 24, 32 * 10, 32, 32));
+		for (int i = 0; i < SEQUENCECOUNT - 1; i++)
+			_sequence[i]->next = _sequence[i + 1];
+		_sequence[SEQUENCECOUNT - 1]->next = _sequence[0];
+	}
 
 	// Load Game Over Stuff
 	_gameOverTexture = new Texture2D();
 	_gameOverTexture->Load("Textures/GameOver.png", false);
 	_gameOverSource = new Rect(0, 0, 64, 64);
-	_gameOverPos = new Vector2(Graphics::GetViewportWidth() / 2 - 32, Graphics::GetViewportHeight() / 2 - 100);
-	_gameOverStringPos = new Vector2(Graphics::GetViewportWidth() / 2 - 39, Graphics::GetViewportHeight() / 2 - 20);
+	_gameOverPos = new Vector2(Graphics::GetViewportWidth() / 2 - 32, Graphics::GetViewportHeight() / 2 - 110);
+	_gameOverStringPos = new Vector2(Graphics::GetViewportWidth() / 2 - 39, Graphics::GetViewportHeight() / 2 - 25);
+	_gameOverNamePos = new Vector2(Graphics::GetViewportWidth() / 2 - 39, Graphics::GetViewportHeight() / 2 - 5);
 
 	// Load Pacman
 	_ourPac->_texture = new Texture2D();
 	_ourPac->_texture->Load("Textures/Pacman.tga", false);
-	//_ourPac->_position = new Vector2(0.0f, 350.0f);
 	_ourPac->_sourceRect = new Rect(0.0f, 0.0f, 32.0f, 32.0f);
-	//_ourPac->_direction = RIGHT;
 
 	// Load Walls
 	_wallTexture = new Texture2D();
 	_wallTexture->Load("Textures/wall.png", false);
-	_walls[0] = new Wall(0, 0, Graphics::GetViewportWidth(), 32); // Top Bounds
+	{
+		_walls[0] = new Wall(0, 0, Graphics::GetViewportWidth(), 32); // Top Bounds
 
-	_walls[1] = new Wall(0, 32, 32, 32 * 6); // Left Side Bounds
-	_walls[2] = new Wall(0, 32 * 7, 32 * 7, 32 * 4);
-	_walls[3] = new Wall(0, 32 * 12, 32 * 7, 32 * 4);
-	_walls[4] = new Wall(0, 32 * 15, 32, 32 * 8);
+		_walls[1] = new Wall(0, 32, 32, 32 * 6); // Left Side Bounds
+		_walls[2] = new Wall(0, 32 * 7, 32 * 7, 32 * 4);
+		_walls[3] = new Wall(0, 32 * 12, 32 * 7, 32 * 4);
+		_walls[4] = new Wall(0, 32 * 15, 32, 32 * 8);
 
-	_walls[5] = new Wall(0, Graphics::GetViewportHeight() - 32, Graphics::GetViewportWidth(), 32); // Bottom Bounds
+		_walls[5] = new Wall(0, Graphics::GetViewportHeight() - 32, Graphics::GetViewportWidth(), 32); // Bottom Bounds
 
-	_walls[6] = new Wall(32 * 2, 32 * 2, 32 * 5, 32 * 2); // 1st Column Top Box
+		_walls[6] = new Wall(32 * 2, 32 * 2, 32 * 5, 32 * 2); // 1st Column Top Box
 
-	_walls[7] = new Wall(32 * 2, 32 * 5, 32 * 5, 32); // 1st Column Slim Box
+		_walls[7] = new Wall(32 * 2, 32 * 5, 32 * 5, 32); // 1st Column Slim Box
 
-	_walls[8] = new Wall(32 * 1, 32 * 19, 32 * 2, 32); // 1st Column Small - at Bottom
+		_walls[8] = new Wall(32 * 1, 32 * 19, 32 * 2, 32); // 1st Column Small - at Bottom
 
-	_walls[9] = new Wall(32 * 2, 32 * 17, 32 * 5, 32); // 1st Column Pointing Left Shape
-	_walls[10] = new Wall(32 * 4, 32 * 18, 32 * 3, 32 * 2);
+		_walls[9] = new Wall(32 * 2, 32 * 17, 32 * 5, 32); // 1st Column Pointing Left Shape
+		_walls[10] = new Wall(32 * 4, 32 * 18, 32 * 3, 32 * 2);
 
-	_walls[11] = new Wall(32 * 8, 32 * 2, 32 * 6, 32 * 2); // 2nd Column Top Block
+		_walls[11] = new Wall(32 * 8, 32 * 2, 32 * 6, 32 * 2); // 2nd Column Top Block
 
-	_walls[12] = new Wall(32 * 8, 32 * 5, 32, 32 * 6); // 2nd Column Sideways T
-	_walls[13] = new Wall(32 * 9, 32 * 7, 32 * 4, 32);
+		_walls[12] = new Wall(32 * 8, 32 * 5, 32, 32 * 6); // 2nd Column Sideways T
+		_walls[13] = new Wall(32 * 9, 32 * 7, 32 * 4, 32);
 
-	_walls[14] = new Wall(32 * 8, 32 * 12, 32, 32 * 4); // 2nd Column |
+		_walls[14] = new Wall(32 * 8, 32 * 12, 32, 32 * 4); // 2nd Column |
 
-	_walls[15] = new Wall(32 * 8, 32 * 17, 32 * 5, 32); // 2nd Column Above Inverted T
+		_walls[15] = new Wall(32 * 8, 32 * 17, 32 * 5, 32); // 2nd Column Above Inverted T
 
-	_walls[16] = new Wall(32 * 2, 32 * 21, 32 * 12, 32); // 2nd Column Inverted T
-	_walls[17] = new Wall(32 * 8, 32 * 19, 32 * 2, 32 * 2);
+		_walls[16] = new Wall(32 * 2, 32 * 21, 32 * 12, 32); // 2nd Column Inverted T
+		_walls[17] = new Wall(32 * 8, 32 * 19, 32 * 2, 32 * 2);
 
-	_walls[18] = new Wall(32 * 15, 32, 32 * 2, 32 * 3); // Top Divide |
+		_walls[18] = new Wall(32 * 15, 32, 32 * 2, 32 * 3); // Top Divide |
 
-	_walls[19] = new Wall(32 * 11, 32 * 5, 32 * 10, 32); // Top T
-	_walls[20] = new Wall(32 * 15, 32 * 6, 32 * 2, 32 * 2);
+		_walls[19] = new Wall(32 * 11, 32 * 5, 32 * 10, 32); // Top T
+		_walls[20] = new Wall(32 * 15, 32 * 6, 32 * 2, 32 * 2);
 
-	_walls[21] = new Wall(32 * 11, 32 * 15, 32 * 10, 32); // Middle T
-	_walls[22] = new Wall(32 * 15, 32 * 16, 32 * 2, 32 * 2);
+		_walls[21] = new Wall(32 * 11, 32 * 15, 32 * 10, 32); // Middle T
+		_walls[22] = new Wall(32 * 15, 32 * 16, 32 * 2, 32 * 2);
 
-	_walls[23] = new Wall(32 * 11, 32 * 19, 32 * 10, 32); // Bottom T
-	_walls[24] = new Wall(32 * 15, 32 * 20, 32 * 2, 32 * 2);
+		_walls[23] = new Wall(32 * 11, 32 * 19, 32 * 10, 32); // Bottom T
+		_walls[24] = new Wall(32 * 15, 32 * 20, 32 * 2, 32 * 2);
 
-	// Right side of Walls
-	_walls[25] = new Wall(32 * 18, 32 * 2, 32 * 6, 32 * 2); // 2nd Column Top Block
+		// Right side of Walls
+		_walls[25] = new Wall(32 * 18, 32 * 2, 32 * 6, 32 * 2); // 2nd Column Top Block
 
-	_walls[26] = new Wall(32 * 23, 32 * 5, 32, 32 * 6); // 2nd Column Sideways T
-	_walls[27] = new Wall(32 * 19, 32 * 7, 32 * 4, 32);
+		_walls[26] = new Wall(32 * 23, 32 * 5, 32, 32 * 6); // 2nd Column Sideways T
+		_walls[27] = new Wall(32 * 19, 32 * 7, 32 * 4, 32);
 
-	_walls[28] = new Wall(32 * 23, 32 * 12, 32, 32 * 4); // 2nd Column |
+		_walls[28] = new Wall(32 * 23, 32 * 12, 32, 32 * 4); // 2nd Column |
 
-	_walls[29] = new Wall(32 * 19, 32 * 17, 32 * 5, 32); // 2nd Column -- Above Inverted T
+		_walls[29] = new Wall(32 * 19, 32 * 17, 32 * 5, 32); // 2nd Column -- Above Inverted T
 
-	_walls[30] = new Wall(32 * 18, 32 * 21, 32 * 12, 32); // 2nd Column Inverted T
-	_walls[31] = new Wall(32 * 22, 32 * 19, 32 * 2, 32 * 2);
+		_walls[30] = new Wall(32 * 18, 32 * 21, 32 * 12, 32); // 2nd Column Inverted T
+		_walls[31] = new Wall(32 * 22, 32 * 19, 32 * 2, 32 * 2);
 
-	_walls[32] = new Wall(Graphics::GetViewportWidth() - 32, 32, 32, 32 * 6); // Right Side Bounds
-	_walls[33] = new Wall(Graphics::GetViewportWidth() - (32 * 7), 32 * 7, 32 * 7, 32 * 4);
-	_walls[34] = new Wall(Graphics::GetViewportWidth() - (32 * 7), 32 * 12, 32 * 7, 32 * 4);
-	_walls[35] = new Wall(Graphics::GetViewportWidth() - 32, 32 * 15, 32, 32 * 8);
+		_walls[32] = new Wall(Graphics::GetViewportWidth() - 32, 32, 32, 32 * 6); // Right Side Bounds
+		_walls[33] = new Wall(Graphics::GetViewportWidth() - (32 * 7), 32 * 7, 32 * 7, 32 * 4);
+		_walls[34] = new Wall(Graphics::GetViewportWidth() - (32 * 7), 32 * 12, 32 * 7, 32 * 4);
+		_walls[35] = new Wall(Graphics::GetViewportWidth() - 32, 32 * 15, 32, 32 * 8);
 
-	_walls[36] = new Wall(32 * 25, 32 * 2, 32 * 5, 32 * 2); // 1st Column Top Box
+		_walls[36] = new Wall(32 * 25, 32 * 2, 32 * 5, 32 * 2); // 1st Column Top Box
 
-	_walls[37] = new Wall(32 * 25, 32 * 5, 32 * 5, 32); // 1st Column Slim Box
+		_walls[37] = new Wall(32 * 25, 32 * 5, 32 * 5, 32); // 1st Column Slim Box
 
-	_walls[38] = new Wall(32 * 29, 32 * 19, 32 * 2, 32); // 1st Column Small - at Bottom
+		_walls[38] = new Wall(32 * 29, 32 * 19, 32 * 2, 32); // 1st Column Small - at Bottom
 
-	_walls[39] = new Wall(32 * 25, 32 * 17, 32 * 5, 32); // 1st Column Pointing Left Shape
-	_walls[40] = new Wall(32 * 25, 32 * 18, 32 * 3, 32 * 2);
+		_walls[39] = new Wall(32 * 25, 32 * 17, 32 * 5, 32); // 1st Column Pointing Left Shape
+		_walls[40] = new Wall(32 * 25, 32 * 18, 32 * 3, 32 * 2);
 
-	_walls[41] = new Wall(32 * 11, 32 * 9, 32, 32 * 4); // Ghost Cage
-	_walls[42] = new Wall(32 * 11, 32 * 13, 32 * 10, 32);
-	_walls[43] = new Wall(32 * 20, 32 * 9, 32, 32 * 4);
-	_walls[44] = new Wall(32 * 12, 32 * 9, 32 * 3, 32);
-	_walls[45] = new Wall(32 * 17, 32 * 9, 32 * 3, 32);
+		_walls[41] = new Wall(32 * 11, 32 * 9, 32, 32 * 4); // Ghost Cage
+		_walls[42] = new Wall(32 * 11, 32 * 13, 32 * 10, 32);
+		_walls[43] = new Wall(32 * 20, 32 * 9, 32, 32 * 4);
+		_walls[44] = new Wall(32 * 12, 32 * 9, 32 * 3, 32);
+		_walls[45] = new Wall(32 * 17, 32 * 9, 32 * 3, 32);
+	}
 
 	// Load Munchies
 	Texture2D* munchieTex = new Texture2D();
@@ -271,7 +272,7 @@ void Pacman::LoadContent()
 	// Load Ghosts
 	_ghosts[0]->_texture = new Texture2D();
 	_ghosts[0]->_texture->Load("Textures/GhostBlue.png", false);
-	//_ghosts[0]->_position = new Rect(rand() % Graphics::GetViewportWidth(), rand() % Graphics::GetViewportHeight(), 32, 32);
+	_ghosts[0]->_position = new Vector2();
 	_ghosts[0]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
 	/*_ghosts[0]->_direction = LEFT;
 	{
@@ -296,10 +297,44 @@ void Pacman::LoadContent()
 	}*/
 
 	_ghosts[1]->_texture = new Texture2D();
-	_ghosts[1]->_texture->Load("Textures/GhostGrayscale.png", false);
-	//_ghosts[1]->_position = new Rect(32 * 16, 32 * 11, 32, 32);
+	_ghosts[1]->_texture->Load("Textures/GhostGreen.png", false);
+	_ghosts[1]->_position = new Vector2();
 	_ghosts[1]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
-	//_ghosts[1]->_direction = UP;
+
+	_ghosts[2]->_texture = new Texture2D();
+	_ghosts[2]->_texture->Load("Textures/GhostYellow.png", false);
+	_ghosts[2]->_position = new Vector2();
+	_ghosts[2]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
+	{
+		_patrolSequence[0] = new MovementSequence(Direction::DOWN, new Rect(32 * 23, 32 * 8, 32, 32));
+		_patrolSequence[1] = new MovementSequence(Direction::LEFT, new Rect(32 * 22, 32 * 17, 32, 32));
+		_patrolSequence[2] = new MovementSequence(Direction::DOWN, new Rect(32 * 16, 32 * 16, 32, 32));
+		_patrolSequence[3] = new MovementSequence(Direction::LEFT, new Rect(32 * 17, 32 * 19, 32, 32));
+		_patrolSequence[4] = new MovementSequence(Direction::UP, new Rect(32 * 6, 32 * 18, 32, 32));
+		_patrolSequence[5] = new MovementSequence(Direction::RIGHT, new Rect(32 * 7, 32 * 3, 32, 32));
+		_patrolSequence[6] = new MovementSequence(Direction::DOWN, new Rect(32 * 23, 32 * 4, 32, 32));
+		_patrolSequence[7] = new MovementSequence(Direction::LEFT, new Rect(32 * 22, 32 * 7, 32, 32));
+		_patrolSequence[8] = new MovementSequence(Direction::DOWN, new Rect(32 * 16, 32 * 6, 32, 32));
+		_patrolSequence[9] = new MovementSequence(Direction::LEFT, new Rect(32 * 17, 32 * 9, 32, 32));
+		_patrolSequence[10] = new MovementSequence(Direction::DOWN, new Rect(32 * 8, 32 * 8, 32, 32));
+		_patrolSequence[11] = new MovementSequence(Direction::RIGHT, new Rect(32 * 9, 32 * 17, 32, 32));
+		_patrolSequence[12] = new MovementSequence(Direction::DOWN, new Rect(32 * 15, 32 * 16, 32, 32));
+		_patrolSequence[13] = new MovementSequence(Direction::RIGHT, new Rect(32 * 14, 32 * 19, 32, 32));
+		_patrolSequence[14] = new MovementSequence(Direction::UP, new Rect(32 * 25, 32 * 18, 32, 32));
+		_patrolSequence[15] = new MovementSequence(Direction::LEFT, new Rect(32 * 24, 32 * 3, 32, 32));
+		_patrolSequence[16] = new MovementSequence(Direction::DOWN, new Rect(32 * 8, 32 * 4, 32, 32));
+		_patrolSequence[17] = new MovementSequence(Direction::RIGHT, new Rect(32 * 9, 32 * 7, 32, 32));
+		_patrolSequence[18] = new MovementSequence(Direction::DOWN, new Rect(32 * 15, 32 * 6, 32, 32));
+		_patrolSequence[19] = new MovementSequence(Direction::RIGHT, new Rect(32 * 14, 32 * 9, 32, 32));
+		for (int i = 0; i < PATROLSEQUENCECOUNT - 1; i++)
+			_patrolSequence[i]->next = _patrolSequence[i + 1];
+		_patrolSequence[PATROLSEQUENCECOUNT - 1]->next = _patrolSequence[0];
+	}
+
+	_ghosts[3]->_texture = new Texture2D();
+	_ghosts[3]->_texture->Load("Textures/GhostRed.png", false);
+	_ghosts[3]->_position = new Vector2();
+	_ghosts[3]->_sourceRect = new Rect(0.0f, 0.0f, 32, 32);
 
 	// Set string position
 	_debugStringPosition = new Vector2(10.0f, 25.0f);
@@ -320,6 +355,25 @@ void Pacman::LoadContent()
 	_scoreScreen = new Button("Scores", Graphics::GetViewportWidth() / 2 - 29, Graphics::GetViewportHeight() / 2 + 25, 59, 20, Color::Yellow);
 	_toMenu = new Button("Back", Graphics::GetViewportWidth() / 2 - 21, Graphics::GetViewportHeight() / 2 + 20, 42, 20, Color::Yellow);
 
+	// Load Scores
+	ifstream inFile("scores.txt");
+	if (inFile.is_open())
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			scores[i].name = "";
+			scores[i].score = -1;
+		}
+		while (!inFile.eof())
+		{
+			inFile >> scores[scoresInFile].name;
+			inFile >> scores[scoresInFile].score;
+			scoresInFile++;
+		}
+
+		inFile.close();
+	}
+
 	ResetMap();
 }
 
@@ -330,8 +384,10 @@ void Pacman::ResetMap()
 
 	_ourPac->_position = new Vector2(0.0f, 350.0f);
 	_ourPac->_direction = RIGHT;
+	_ourPac->_speedMulti = 1.0;
 
-	_ghosts[0]->_position = new Rect(rand() % Graphics::GetViewportWidth(), rand() % (Graphics::GetViewportHeight() - 128) + 64, 32, 32);
+	_ghosts[0]->_position->X = rand() % (Graphics::GetViewportWidth() - 128) + 64;
+	_ghosts[0]->_position->Y = rand() % (Graphics::GetViewportHeight() - 128) + 64;
 	_ghosts[0]->_direction = LEFT;
 	/*{
 		bool ok = false;
@@ -353,9 +409,21 @@ void Pacman::ResetMap()
 			}
 		}
 	}*/
-	_ghosts[1]->_position = new Rect(32 * 16, 32 * 11, 32, 32);
-	_ghosts[1]->_direction = UP;
-	ghostFirstBump = true;
+
+
+	_ghosts[1]->_position->X = rand() % (Graphics::GetViewportWidth() - 128) + 64;
+	_ghosts[1]->_position->Y = rand() % (Graphics::GetViewportHeight() - 128) + 64;
+	_ghosts[1]->_direction = DOWN;
+
+	_ghosts[2]->_position->X = 32 * 16;
+	_ghosts[2]->_position->Y = 32 * 11;
+	_ghosts[2]->_direction = UP;
+	_ghosts[2]->_extraData = -1;
+
+	_ghosts[3]->_position->X = 32 * 15;
+	_ghosts[3]->_position->Y = 32 * 11;
+	_ghosts[3]->_direction = UP;
+	_ghosts[3]->_extraData = true;
 
 	for (int i = 0; i < MUNCHIECOUNT; i++)
 	{
@@ -390,6 +458,11 @@ void Pacman::ResetMap()
 			}
 		}
 	}
+
+	name = "";
+	for (int i = 0; i < 26; i++)
+		keysPressed[i] = false;
+	backspace = false;
 }
 
 bool wDown, aDown, sDown, dDown, moving, animate = false, trymove = false, clicked = false;
@@ -400,6 +473,7 @@ void Pacman::Update(int elapsedTime)
 	Input::KeyboardState* keyboardState = Input::Keyboard::GetState();
 	//Gets the current state of the mouse
 	Input::MouseState* mouseState = Input::Mouse::GetState();
+
 	switch (stage)
 	{
 	case Menu:
@@ -482,12 +556,56 @@ void Pacman::InputGame(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 				if (CollisionCheck(mouseState->X, mouseState->Y, 1, 1,
 					_toMenu->buttonPos->X, _toMenu->buttonPos->Y, _toMenu->sourceRect->Width, _toMenu->sourceRect->Height)) {
 					stage = Menu;
+					if (!name.empty())
+					{
+						int pos = IsScoreInTop10(score);
+						if (pos >= 0)
+						{
+							for (int i = scoresInFile; i >= 0; i--)
+							{
+								if (i > pos)
+								{
+									scores[i].name = scores[i - 1].name;
+									scores[i].score = scores[i - 1].score;
+								}
+								else if (i == pos)
+								{
+									scores[i].name = name;
+									scores[i].score = score;
+									scoresInFile++;
+									break;
+								}
+							}
+							SaveScores();
+						}
+
+					}
 					ResetMap();
 				}
 			}
 		}
 		else if (mouseState->LeftButton == Input::ButtonState::RELEASED)
 			clicked = false;
+
+		for (int i = 0; i < 26; i++)
+		{
+			if (!keysPressed[i] && keyboardState->IsKeyDown(Input::Keys(i)) && name.length() < 16)
+			{
+				name += char(65 + i);
+				keysPressed[i] = true;
+			}
+			else if (keyboardState->IsKeyUp(Input::Keys(i)))
+				keysPressed[i] = false;
+		}
+
+		if (!backspace && keyboardState->IsKeyDown(Input::Keys::BACKSPACE) && !name.empty())
+		{
+			name.erase(name.length() - 1);
+			backspace = true;
+		}
+		else if (keyboardState->IsKeyUp(Input::Keys::BACKSPACE))
+			backspace = false;
+
 		return;
 	}
 
@@ -561,29 +679,12 @@ void Pacman::InputMenu(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 				_startGame->buttonPos->X, _startGame->buttonPos->Y, _startGame->sourceRect->Width, _startGame->sourceRect->Height)) {
 				stage = InGame;
 				_pog->SetLooping(true);
+				Audio::Play(_pog);
 				_ourPac->dead = false;
 			}
 			else if (CollisionCheck(mouseState->X, mouseState->Y, 1, 1,
 				_scoreScreen->buttonPos->X, _scoreScreen->buttonPos->Y, _scoreScreen->sourceRect->Width, _scoreScreen->sourceRect->Height)) {
 				stage = ScoresMenu;
-				ifstream inFile("scores.txt");
-				if (inFile.is_open())
-				{
-					for (int i = 0; i < 10; i++)
-					{
-						scoreNames[i] = "";
-						scores[i] = -1;
-					}
-					int i = 0;
-					while (!inFile.eof())
-					{
-						inFile >> scoreNames[i];
-						inFile >> scores[i];
-						i++;
-					}
-
-					inFile.close();
-				}
 			}
 		}
 	}
@@ -594,6 +695,7 @@ void Pacman::InputMenu(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 	{
 		stage = InGame;
 		_pog->SetLooping(true);
+		Audio::Play(_pog);
 		_ourPac->dead = false;
 	}
 
@@ -689,18 +791,7 @@ void Pacman::UpdateMenuPacman()
 		break;
 	}
 
-	int left1 = _ourPac->_position->X;
-	int right1 = _ourPac->_position->X + _ourPac->_sourceRect->Width;
-	int top1 = _ourPac->_position->Y;
-	int bottom1 = _ourPac->_position->Y + _ourPac->_sourceRect->Height;
-	int top2 = 0, bottom2 = 0, left2 = 0, right2 = 0;
-
-	bottom2 = _sequence[menuPacSequence]->posAndSize->Y + _sequence[menuPacSequence]->posAndSize->Height;
-	left2 = _sequence[menuPacSequence]->posAndSize->X;
-	right2 = _sequence[menuPacSequence]->posAndSize->X + _sequence[menuPacSequence]->posAndSize->Width;
-	top2 = _sequence[menuPacSequence]->posAndSize->Y;
-
-	if ((bottom1 > top2 && (top1 < bottom2) && (right1 > left2) && (left1 < right2)))
+	if (HasReachedSequence(_ourPac->_position, _ourPac->_sourceRect, _sequence[menuPacSequence]))
 	{
 		_ourPac->_direction = _sequence[menuPacSequence]->dir;
 		menuPacSequence = (menuPacSequence + 1) % SEQUENCECOUNT;
@@ -710,7 +801,6 @@ void Pacman::UpdateMenuPacman()
 		_ourPac->_position->X = 1017;
 	if (_ourPac->_position->X > 1019)
 		_ourPac->_position->X = -20;
-
 
 	if (_ourPac->_position->Y < -22)
 		_ourPac->_position->Y = 756;
@@ -796,9 +886,13 @@ void Pacman::DrawGame(int elapsedTime)
 	}
 	else
 	{
+		std::stringstream nameStream;
+		nameStream << "Enter Name: " << name << endl;
 		DrawButton(_toMenu);
 		SpriteBatch::Draw(_gameOverTexture, _gameOverPos, _gameOverSource, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
 		SpriteBatch::DrawString("You Died", _gameOverStringPos, Color::Red);
+		_gameOverNamePos->X = Graphics::GetViewportWidth() / 2 - 52 - name.length() * 6;
+		SpriteBatch::DrawString(nameStream.str().c_str(), _gameOverNamePos, Color::Red);
 	}
 
 	if (_paused)
@@ -825,8 +919,8 @@ void Pacman::DrawMenu(int elapsedTime) {
 	_ourPac->_sourceRect->X = (_frameCount % 20 >= 10 ? 32.0f : 0.0f); // Animates Packman
 	SpriteBatch::Draw(_ourPac->_texture, _ourPac->_position, _ourPac->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Pacman over Munchies
 
-	//for (int i = 0; i < SEQUENCECOUNT; i++)
-		//SpriteBatch::Draw(_buttonTexture, _sequence[i]->posAndSize, _sequence[i]->posAndSize, Vector2::Zero, 1.0f, 0.0f, Color::Yellow, SpriteEffect::NONE); // Draws Wall
+	//for (int i = 0; i < PATROLSEQUENCECOUNT; i++)
+		//SpriteBatch::Draw(_buttonTexture, _patrolSequence[i]->posAndSize, _patrolSequence[i]->posAndSize, Vector2::Zero, 1.0f, 0.0f, Color::Yellow, SpriteEffect::NONE); // Draws Wall
 
 	std::stringstream menuStream;
 	menuStream << "Click Start or press SPACE to start";
@@ -842,7 +936,7 @@ void Pacman::DrawScores(int elapsedTime) {
 	std::stringstream menuStream;
 	int i;
 	for (i = 0; i < 10; i++) {
-		if (scores[i] == -1)
+		if (scores[i].score == -1)
 			if (i == 0)
 			{
 				menuStream << "No scores recorded!" << endl;
@@ -852,7 +946,7 @@ void Pacman::DrawScores(int elapsedTime) {
 				i--;
 				break;
 			}
-		menuStream << i + 1 << ". " << scores[i] << " - " << scoreNames[i] << endl;
+		menuStream << i + 1 << ". " << scores[i].score << " - " << scores[i].name << endl;
 	}
 	_scoresMenuStringPosition->Y = scoresStringY - i * 30.0f;
 	DrawButton(_toMenu);
@@ -911,10 +1005,12 @@ void Pacman::CheckGhostCollisions()
 
 void Pacman::UpdateGhost(MovingEnemy* ghost, int elapsedTime)
 {
-	bool moved = false;
-	switch (ghost->_id)
+	bool canMove = true; // Defaults to True
+
+	switch (ghost->_id) // 0-> left-right 1-> up-down 2-> patrol 3-> random
 	{
 	case 0:
+	case 1:
 		if (ghost->_position->X + ghost->_sourceRect->Width >= Graphics::GetViewportWidth()) // Hits Right Edge
 		{
 			if (ghost->_position->X > Graphics::GetViewportWidth())
@@ -928,34 +1024,42 @@ void Pacman::UpdateGhost(MovingEnemy* ghost, int elapsedTime)
 			ghost->_direction = RIGHT;
 		}
 
-		if (ghost->_direction == LEFT)
-			ghost->_position->X -= ghost->_speed;
-		else
-			ghost->_position->X += ghost->_speed;
-		break;
-	case 1:
-		switch (ghost->_direction)
+		if (ghost->_position->Y + ghost->_sourceRect->Height >= Graphics::GetViewportHeight()) // Hits Bottom Edge
 		{
-		case UP:
-			moved = MoveGhost(ghost, 0, -(ghost->_speed));
-			break;
-		case DOWN:
-			moved = MoveGhost(ghost, 0, ghost->_speed);
-			break;
-		case LEFT:
-			moved = MoveGhost(ghost, -(ghost->_speed), 0);
-			break;
-		case RIGHT:
-			moved = MoveGhost(ghost, ghost->_speed, 0);
-			break;
-		default:
-			break;
+			if (ghost->_position->Y > Graphics::GetViewportHeight())
+				ghost->_position->Y = Graphics::GetViewportHeight();
+			ghost->_direction = UP;
 		}
-		if (!moved)
-			if (ghostFirstBump)
+		else if (ghost->_position->Y <= 0) // Hits Top Edge
+		{
+			if (ghost->_position->Y < 0)
+				ghost->_position->Y = 0;
+			ghost->_direction = DOWN;
+		}
+		break;
+	case 2:
+		if (ghost->_extraData == -1)
+		{
+			canMove = CanMoveGhost(ghost);
+			if (!canMove) {
+				ghost->_direction = RIGHT;
+				ghost->_extraData++;
+			}
+		}
+		else
+			if (HasReachedSequence(ghost->_position, ghost->_sourceRect, _patrolSequence[ghost->_extraData]))
+			{
+				ghost->_direction = _patrolSequence[ghost->_extraData]->dir;
+				ghost->_extraData = (ghost->_extraData + 1) % PATROLSEQUENCECOUNT;
+			}
+		break;
+	case 3:
+		canMove = CanMoveGhost(ghost);
+		if (!canMove)
+			if (ghost->_extraData)
 			{
 				ghost->_direction = LEFT;
-				ghostFirstBump = false;
+				ghost->_extraData = false;
 			}
 			else
 				ghost->_direction = Direction(rand() % 4);
@@ -963,10 +1067,41 @@ void Pacman::UpdateGhost(MovingEnemy* ghost, int elapsedTime)
 	default:
 		break;
 	}
+
+	if (canMove)
+	{
+		if (ghost->_direction == LEFT)
+			ghost->_position->X -= ghost->_speed;
+		else if (ghost->_direction == RIGHT)
+			ghost->_position->X += ghost->_speed;
+		else if (ghost->_direction == UP)
+			ghost->_position->Y -= ghost->_speed;
+		else if (ghost->_direction == DOWN)
+			ghost->_position->Y += ghost->_speed;
+	}
 }
 
-bool Pacman::MoveGhost(MovingEnemy* ghost, int x, int y)
+bool Pacman::CanMoveGhost(MovingEnemy* ghost)
 {
+	int x = 0, y = 0;
+	switch (ghost->_direction)
+	{
+	case UP:
+		y = -(ghost->_speed);
+		break;
+	case DOWN:
+		y = ghost->_speed;
+		break;
+	case LEFT:
+		x = -(ghost->_speed);
+		break;
+	case RIGHT:
+		x = ghost->_speed;
+		break;
+	default:
+		break;
+	}
+
 	int left1 = ghost->_position->X + x;
 	int right1 = ghost->_position->X + ghost->_sourceRect->Width + x;
 	int top1 = ghost->_position->Y + y;
@@ -984,8 +1119,52 @@ bool Pacman::MoveGhost(MovingEnemy* ghost, int x, int y)
 			return false;
 	}
 
-	ghost->_position->X += x;
-	ghost->_position->Y += y;
-
 	return true;
+}
+
+int Pacman::IsScoreInTop10(int scoreToCheck)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		if (scoreToCheck > scores[i].score)
+			return i;
+	}
+
+	if (scoresInFile < 10)
+		return scoresInFile;
+
+	return -1;
+}
+
+void Pacman::SaveScores()
+{
+	ofstream ofStream("scores.txt", std::ios::out | std::ios::trunc);
+	for (int i = 0; i < scoresInFile; i++)
+	{
+		ofStream << scores[i].name << endl;
+		ofStream << scores[i].score;
+		if (i != scoresInFile - 1)
+			ofStream << endl;
+	}
+	ofStream.close();
+}
+
+bool Pacman::HasReachedSequence(Vector2* pos, Rect* source, MovementSequence* seq)
+{
+	int left1 = pos->X;
+	int right1 = pos->X + source->Width;
+	int top1 = pos->Y;
+	int bottom1 = pos->Y + source->Height;
+	int top2 = 0, bottom2 = 0, left2 = 0, right2 = 0;
+
+	bottom2 = seq->posAndSize->Y + seq->posAndSize->Height;
+	left2 = seq->posAndSize->X;
+	right2 = seq->posAndSize->X + seq->posAndSize->Width;
+	top2 = seq->posAndSize->Y;
+
+	if ((bottom1 > top2 && (top1 < bottom2) && (right1 > left2) && (left1 < right2)))
+	{
+		return true;
+	}
+	return false;
 }

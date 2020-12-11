@@ -7,10 +7,11 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 #endif
-#define MUNCHIECOUNT 20
-#define GHOSTCOUNT 2
+#define MUNCHIECOUNT 40
+#define GHOSTCOUNT 4
 #define WALLCOUNT 46
 #define SEQUENCECOUNT 12
+#define PATROLSEQUENCECOUNT 20
 // Just need to include main header file
 #include "S2D/S2D.h"
 
@@ -99,24 +100,25 @@ private:
 	bool _paused, _pKeyDown;
 
 	void UpdateMenuPacman();
-	struct MenuSequence
+	struct MovementSequence
 	{
-		MenuSequence* next;
+		MovementSequence* next;
 		Direction dir;
 		Rect* posAndSize;
 
-		MenuSequence(Direction dir, Rect* posAndSize)
+		MovementSequence(Direction dir, Rect* posAndSize)
 		{
 			this->dir = dir;
 			this->posAndSize = posAndSize;
 		}
 
-		~MenuSequence()
+		~MovementSequence()
 		{
 			delete posAndSize;
 		}
 	};
-	MenuSequence* _sequence[SEQUENCECOUNT];
+	MovementSequence* _sequence[SEQUENCECOUNT];
+	bool Pacman::HasReachedSequence(Vector2* pos, Rect* source, MovementSequence* seq);
 
 	// Data to represent Pacman
 	struct PacCharacter {
@@ -153,11 +155,12 @@ private:
 
 	struct MovingEnemy {
 		int _id;
-		Rect* _position;
+		Vector2* _position;
 		Rect* _sourceRect;
 		Texture2D* _texture;
 		Direction _direction;
 		double _speed = 4.0f;
+		int _extraData = 0;
 
 		~MovingEnemy() {
 			delete _position;
@@ -167,9 +170,10 @@ private:
 	};
 
 	MovingEnemy* _ghosts[GHOSTCOUNT];
+	MovementSequence* _patrolSequence[PATROLSEQUENCECOUNT];
 	void CheckGhostCollisions();
 	void UpdateGhost(MovingEnemy* ghost, int elapsedTime);
-	bool MoveGhost(MovingEnemy* ghost, int x, int y);
+	bool CanMoveGhost(MovingEnemy* ghost);
 
 	// Position for String
 	Vector2* _debugStringPosition;
@@ -177,6 +181,7 @@ private:
 	Texture2D* _gameOverTexture;
 	Vector2* _gameOverPos;
 	Vector2* _gameOverStringPos;
+	Vector2* _gameOverNamePos;
 	Rect* _gameOverSource;
 
 	SoundEffect* _pog;
@@ -229,4 +234,14 @@ private:
 	};
 	Texture2D* _wallTexture;
 	Wall* _walls[WALLCOUNT];
+
+	struct Score {
+		int score;
+		string name;
+	};
+	Score scores[10];
+	int scoresInFile = 0;
+
+	int IsScoreInTop10(int score);
+	void SaveScores();
 };
