@@ -8,6 +8,7 @@ enum State {
 	Menu, InGame, ScoresMenu
 };
 
+int deathStage = -1;
 int menuPacSequence = 0;
 int score = 0;
 int scoresStringY;
@@ -385,6 +386,11 @@ void Pacman::ResetMap()
 	_ourPac->_position = new Vector2(0.0f, 350.0f);
 	_ourPac->_direction = RIGHT;
 	_ourPac->_speedMulti = 1.0;
+	_ourPac->dead = false;
+	_ourPac->super = false;
+	deathStage = -1;
+	superFrames = -1;
+	cherryEaten = false;
 
 	_ghosts[0]->_position->X = rand() % (Graphics::GetViewportWidth() - 128) + 64;
 	_ghosts[0]->_position->Y = rand() % (Graphics::GetViewportHeight() - 128) + 64;
@@ -505,11 +511,30 @@ void Pacman::Update(int elapsedTime)
 		_frameCount++;
 
 		InputGame(elapsedTime, keyboardState, mouseState);
-		if (!_ourPac->dead)
+
+		if (!_ourPac->dead) {
+			_ourPac->_sourceRect->Y = getYPosFromDirection(_ourPac->_direction);
+			if (!_ourPac->super && animate)
+				_ourPac->_sourceRect->X = (_frameCount % 20 >= 10 ? 32.0f : 0.0f); // Animates Packman
 			UpdatePacman(elapsedTime);
+		}
+		else {
+			if (deathStage == -1)
+			{
+				deathStage++;
+				_ourPac->_sourceRect->X = 3 * 32;
+				_ourPac->_sourceRect->Y = 0;
+			}
+			else if (deathStage < 4 && _frameCount % 5 == 0) // 1st death frame may play for less than 1/5th of a frame
+			{
+				deathStage++;
+				_ourPac->_sourceRect->Y = deathStage * 32;
+			}
+		}
+
 		for (int i = 0; i < GHOSTCOUNT; i++)
 			UpdateGhost(_ghosts[i], elapsedTime);
-		if (!_ourPac->dead)
+		if (!_ourPac->dead && !_ourPac->super)
 			CheckGhostCollisions();
 
 		for (int i = 0; i < MUNCHIECOUNT; i++)
@@ -521,6 +546,23 @@ void Pacman::Update(int elapsedTime)
 				Audio::Play(_nom);
 			}
 		}
+
+		if (!cherryEaten && CollisionCheck(_ourPac->_position->X, _ourPac->_position->Y, _ourPac->_sourceRect->Width, _ourPac->_sourceRect->Height,
+			_cherry->_position->X, _cherry->_position->Y, _cherry->_sourceRect->Width, _cherry->_sourceRect->Height))
+		{
+			_ourPac->super = true;
+			cherryEaten = true;
+			_ourPac->_sourceRect->X = 64.0f; // Animates Packman
+			superFrames = 20 * 20;
+		}
+		else if (superFrames > 0)
+			superFrames--;
+		else if (superFrames == 0)
+		{
+			superFrames = -1;
+			_ourPac->super = false;
+		}
+
 
 		break;
 	case ScoresMenu:
@@ -549,6 +591,8 @@ void Pacman::InputGame(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 {
 	if (_ourPac->dead)
 	{
+		if (deathStage != 4)
+			return;
 		if (!clicked) {
 			if (mouseState->LeftButton == Input::ButtonState::PRESSED)
 			{
@@ -680,7 +724,6 @@ void Pacman::InputMenu(int elapsedTime, Input::KeyboardState* keyboardState, Inp
 				stage = InGame;
 				_pog->SetLooping(true);
 				Audio::Play(_pog);
-				_ourPac->dead = false;
 			}
 			else if (CollisionCheck(mouseState->X, mouseState->Y, 1, 1,
 				_scoreScreen->buttonPos->X, _scoreScreen->buttonPos->Y, _scoreScreen->sourceRect->Width, _scoreScreen->sourceRect->Height)) {
@@ -753,7 +796,8 @@ void Pacman::UpdatePacman(int elapsedTime)
 		{
 			moving = false;
 			animate = false;
-			_ourPac->_sourceRect->X = 0.0f;
+			if (!_ourPac->super)
+				_ourPac->_sourceRect->X = 0.0f;
 			Audio::Stop(_pog);
 			trymove = false;
 		}
@@ -854,7 +898,7 @@ void Pacman::DrawGame(int elapsedTime)
 {
 	// Allows us to easily create a string
 	std::stringstream stream;
-	stream << "Pacman X: " << _ourPac->_position->X << " Y: " << _ourPac->_position->Y << endl << "Score: " << score;
+	stream << /*"Pacman X: " << _ourPac->_position->X << " Y: " << _ourPac->_position->Y << endl <<*/ "Score: " << score;
 
 	SpriteBatch::BeginDraw(); // Starts Drawing
 
@@ -869,7 +913,8 @@ void Pacman::DrawGame(int elapsedTime)
 		SpriteBatch::Draw(_munchies[i]->_texture, _munchies[i]->_position, _munchies[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Munchie
 	}
 
-	SpriteBatch::Draw(_cherry->_texture, _cherry->_position, _cherry->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Cherry
+	if (!cherryEaten)
+		SpriteBatch::Draw(_cherry->_texture, _cherry->_position, _cherry->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Cherry
 
 	for (int i = 0; i < GHOSTCOUNT; i++)
 	{
@@ -877,13 +922,9 @@ void Pacman::DrawGame(int elapsedTime)
 		_ghosts[i]->_sourceRect->Y = (_ghosts[i]->_direction == UP || _ghosts[i]->_direction == DOWN ? 32.0f : 0.0f);
 		SpriteBatch::Draw(_ghosts[i]->_texture, _ghosts[i]->_position, _ghosts[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, (_ghosts[i]->_direction == LEFT ? SpriteEffect::FLIPHORIZONTAL : (_ghosts[i]->_direction == UP ? SpriteEffect::FLIPVERTICAL : SpriteEffect::NONE))); // Draws Ghost
 	}
-	if (!_ourPac->dead)
-	{
-		_ourPac->_sourceRect->Y = getYPosFromDirection(_ourPac->_direction);
-		if (animate)
-			_ourPac->_sourceRect->X = (_frameCount % 20 >= 10 ? 32.0f : 0.0f); // Animates Packman
+
+	if (deathStage != 4)
 		SpriteBatch::Draw(_ourPac->_texture, _ourPac->_position, _ourPac->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Pacman over Munchies
-	}
 	else
 	{
 		std::stringstream nameStream;
@@ -995,7 +1036,6 @@ void Pacman::CheckGhostCollisions()
 		if ((bottom1 > top2 && (top1 < bottom2) && (right1 > left2) && (left1 < right2)))
 		{
 			_ourPac->dead = true;
-			_ourPac->_position->X = -200;
 			Audio::Stop(_pog);
 			Audio::Play(_death);
 			break;

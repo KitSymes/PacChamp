@@ -129,7 +129,7 @@ private:
 		Rect* _sourceRect;
 		Texture2D* _texture;
 		Vector2* _position;
-		bool dead;
+		bool dead, super;
 	};
 
 	PacCharacter* _ourPac;
@@ -152,6 +152,8 @@ private:
 
 	Enemy* _munchies[MUNCHIECOUNT];
 	Enemy* _cherry;
+	bool cherryEaten;
+	int superFrames;
 
 	struct MovingEnemy {
 		int _id;

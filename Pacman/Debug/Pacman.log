@@ -24,101 +24,104 @@ c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.1
           [
               _Ty=S2D::Input::Keys
           ]
-c:\users\owner\documents\github\pacchamp\pacman\pacman.h(202): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.h(203): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.h(227): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(20): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(51): warning C4154: deletion of an array expression; conversion to pointer supplied
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(55): warning C4154: deletion of an array expression; conversion to pointer supplied
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(67): warning C4018: '<': signed/unsigned mismatch
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(69): warning C4154: deletion of an array expression; conversion to pointer supplied
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(74): warning C4154: deletion of an array expression; conversion to pointer supplied
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(101): warning C4154: deletion of an array expression; conversion to pointer supplied
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(109): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(111): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(112): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(115): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\documents\github\pacchamp\pacman\pacman.h(204): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.h(205): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.h(229): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(21): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(52): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(56): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(68): warning C4018: '<': signed/unsigned mismatch
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(70): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(75): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(102): warning C4154: deletion of an array expression; conversion to pointer supplied
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(110): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(112): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(113): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(116): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(117): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(118): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(120): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(119): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(121): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(122): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(125): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(136): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(123): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(126): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(137): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(138): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(143): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(227): warning C4018: '<': signed/unsigned mismatch
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(389): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(390): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(414): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(415): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(430): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(439): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(438): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(446): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(139): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(144): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(228): warning C4018: '<': signed/unsigned mismatch
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(395): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(396): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(420): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(421): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(436): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(445): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(456): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(457): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(518): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(517): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(557): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(614): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(615): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(679): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(686): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(711): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(726): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(444): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(452): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(451): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(462): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(463): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(531): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(543): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(542): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(551): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(550): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(601): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(658): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(659): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(723): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(729): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(732): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(735): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(779): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(782): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(785): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(788): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(813): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(814): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(815): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(816): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(822): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(823): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(824): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(825): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(894): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(982): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(983): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(984): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(985): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(990): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(991): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(992): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(993): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1017): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1030): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1074): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1076): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1078): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1080): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1090): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1093): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1096): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1099): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1105): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1106): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1107): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1108): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1113): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1114): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1115): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1116): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1154): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1155): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1156): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1157): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1160): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1161): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1162): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1163): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(754): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(769): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(772): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(775): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(778): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(823): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(826): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(829): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(832): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(857): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(858): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(859): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(860): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(866): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(867): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(868): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(869): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(935): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1023): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1024): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1025): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1026): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1031): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1032): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1033): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1034): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1057): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1070): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1114): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1116): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1118): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1120): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1130): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1133): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1136): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1139): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1145): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1146): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1147): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1148): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1153): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1154): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1155): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1156): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1194): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1195): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1196): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1197): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1200): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1201): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1202): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\owner\documents\github\pacchamp\pacman\pacman.cpp(1203): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 c:\users\owner\documents\github\pacchamp\pacman\pacman.h(77): warning C4715: 'Pacman::getYPosFromDirection': not all control paths return a value
   Pacman.vcxproj -> C:\Users\Owner\Documents\GitHub\PacChamp\Debug\Pacman.exe
