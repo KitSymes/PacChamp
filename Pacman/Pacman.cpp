@@ -914,7 +914,10 @@ void Pacman::DrawGame(int elapsedTime)
 	}
 
 	if (!cherryEaten)
+	{
+		_cherry->_sourceRect->Y = ((_frameCount % 20) / 4) * 64.0f; // Animates Cherry
 		SpriteBatch::Draw(_cherry->_texture, _cherry->_position, _cherry->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Cherry
+	}
 
 	for (int i = 0; i < GHOSTCOUNT; i++)
 	{
