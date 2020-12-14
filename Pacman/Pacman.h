@@ -182,6 +182,7 @@ private:
 	Vector2* _debugStringPosition;
 
 	Texture2D* _gameOverTexture;
+	Texture2D* _gameWonTexture;
 	Vector2* _gameOverPos;
 	Vector2* _gameOverStringPos;
 	Vector2* _gameOverNamePos;

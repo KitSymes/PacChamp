@@ -80,6 +80,7 @@ Pacman::~Pacman()
 
 	// Delete Game Over Stuff
 	delete _gameOverTexture;
+	delete _gameWonTexture;
 	delete _gameOverSource;
 	delete _gameOverPos;
 	delete _gameOverStringPos;
@@ -134,6 +135,8 @@ void Pacman::LoadContent()
 	// Load Game Over Stuff
 	_gameOverTexture = new Texture2D();
 	_gameOverTexture->Load("Textures/GameOver.png", false);
+	_gameWonTexture = new Texture2D();
+	_gameWonTexture->Load("Textures/GameWon.png", false);
 	_gameOverSource = new Rect(0, 0, 64, 64);
 	_gameOverPos = new Vector2(Graphics::GetViewportWidth() / 2 - 32, Graphics::GetViewportHeight() / 2 - 110);
 	_gameOverStringPos = new Vector2(Graphics::GetViewportWidth() / 2 - 39, Graphics::GetViewportHeight() / 2 - 25);
@@ -951,7 +954,7 @@ void Pacman::DrawGame(int elapsedTime)
 		std::stringstream nameStream;
 		nameStream << "Enter Name: " << name << endl;
 		DrawButton(_toMenu);
-		SpriteBatch::Draw(_gameOverTexture, _gameOverPos, _gameOverSource, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
+		SpriteBatch::Draw(_gameWonTexture, _gameOverPos, _gameOverSource, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
 		SpriteBatch::DrawString("You Win!", _gameOverStringPos, Color::Red);
 		_gameOverNamePos->X = Graphics::GetViewportWidth() / 2 - 52 - name.length() * 6;
 		SpriteBatch::DrawString(nameStream.str().c_str(), _gameOverNamePos, Color::Red);
