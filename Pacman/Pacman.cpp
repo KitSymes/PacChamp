@@ -13,7 +13,7 @@ int menuPacSequence = 0;
 int score = 0;
 int scoresStringY;
 State stage = Menu;
-bool keysPressed[26], backspace;
+bool keysPressed[26], backspace, win;
 string name;
 
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv)
@@ -73,6 +73,7 @@ Pacman::~Pacman()
 	for (int i = 0; i < GHOSTCOUNT; i++)
 		delete _ghosts[i];
 	delete[] _ghosts;
+	delete _sadTex;
 
 	// Delete Cherry
 	delete _cherry;
@@ -271,6 +272,9 @@ void Pacman::LoadContent()
 	_cherry->_sourceRect = new Rect(0, 0, 64, 64);
 
 	// Load Ghosts
+	_sadTex = new Texture2D();
+	_sadTex->Load("Textures/SadGhost.png", false);
+
 	_ghosts[0]->_texture = new Texture2D();
 	_ghosts[0]->_texture->Load("Textures/GhostBlue.png", false);
 	_ghosts[0]->_position = new Vector2();
@@ -382,6 +386,7 @@ void Pacman::ResetMap()
 {
 	menuPacSequence = 0;
 	score = 0;
+	win = false;
 
 	_ourPac->_position = new Vector2(0.0f, 350.0f);
 	_ourPac->_direction = RIGHT;
@@ -498,8 +503,8 @@ void Pacman::Update(int elapsedTime)
 						Audio::Pause(_pog);
 				}
 				else {
-					if (_pog->IsLoaded() && !_ourPac->dead)
-						Audio::Resume(_pog);
+					//if (_pog->IsLoaded() && !_ourPac->dead)
+						//Audio::Resume(_pog);
 				}
 			}
 
@@ -512,13 +517,13 @@ void Pacman::Update(int elapsedTime)
 
 		InputGame(elapsedTime, keyboardState, mouseState);
 
-		if (!_ourPac->dead) {
+		if (!_ourPac->dead && !win) {
 			_ourPac->_sourceRect->Y = getYPosFromDirection(_ourPac->_direction);
 			if (!_ourPac->super && animate)
 				_ourPac->_sourceRect->X = (_frameCount % 20 >= 10 ? 32.0f : 0.0f); // Animates Packman
 			UpdatePacman(elapsedTime);
 		}
-		else {
+		else if (_ourPac->dead) {
 			if (deathStage == -1)
 			{
 				deathStage++;
@@ -532,9 +537,10 @@ void Pacman::Update(int elapsedTime)
 			}
 		}
 
-		for (int i = 0; i < GHOSTCOUNT; i++)
-			UpdateGhost(_ghosts[i], elapsedTime);
-		if (!_ourPac->dead && !_ourPac->super)
+		if (!win)
+			for (int i = 0; i < GHOSTCOUNT; i++)
+				UpdateGhost(_ghosts[i], elapsedTime);
+		if (!_ourPac->dead && !_ourPac->super && !win)
 			CheckGhostCollisions();
 
 		for (int i = 0; i < MUNCHIECOUNT; i++)
@@ -543,7 +549,18 @@ void Pacman::Update(int elapsedTime)
 				_munchies[i]->_position->X, _munchies[i]->_position->Y, _munchies[i]->_sourceRect->Width, _munchies[i]->_sourceRect->Height)) {
 				_munchies[i]->_position->X = -100;
 				score += 100;
-				Audio::Play(_nom);
+				if (score == MUNCHIECOUNT * 100)
+				{
+					win = true;
+					Audio::Stop(_pog);
+					for (int i = 0; i < GHOSTCOUNT; i++)
+					{
+						_ghosts[i]->_sourceRect->X = 0;
+						_ghosts[i]->_sourceRect->Y = 0;
+					}
+				}
+				else
+					Audio::Play(_nom);
 			}
 		}
 
@@ -589,9 +606,9 @@ void Pacman::Input(int elapsedTime, Input::KeyboardState* keyboardState, Input::
 
 void Pacman::InputGame(int elapsedTime, Input::KeyboardState* keyboardState, Input::MouseState* mouseState) // Handle Mouse Input – Reposition Cherry 
 {
-	if (_ourPac->dead)
+	if (_ourPac->dead || win)
 	{
-		if (deathStage != 4)
+		if (_ourPac->dead && deathStage != 4)
 			return;
 		if (!clicked) {
 			if (mouseState->LeftButton == Input::ButtonState::PRESSED)
@@ -918,15 +935,28 @@ void Pacman::DrawGame(int elapsedTime)
 		_cherry->_sourceRect->Y = ((_frameCount % 20) / 4) * 64.0f; // Animates Cherry
 		SpriteBatch::Draw(_cherry->_texture, _cherry->_position, _cherry->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Cherry
 	}
-
 	for (int i = 0; i < GHOSTCOUNT; i++)
 	{
-		_ghosts[i]->_sourceRect->X = (_frameCount % 5 >= 2 ? 32.0f : 0.0f);
-		_ghosts[i]->_sourceRect->Y = (_ghosts[i]->_direction == UP || _ghosts[i]->_direction == DOWN ? 32.0f : 0.0f);
-		SpriteBatch::Draw(_ghosts[i]->_texture, _ghosts[i]->_position, _ghosts[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, (_ghosts[i]->_direction == LEFT ? SpriteEffect::FLIPHORIZONTAL : (_ghosts[i]->_direction == UP ? SpriteEffect::FLIPVERTICAL : SpriteEffect::NONE))); // Draws Ghost
+		if (win)
+			SpriteBatch::Draw(_sadTex, _ghosts[i]->_position, _ghosts[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Ghost
+		else {
+			_ghosts[i]->_sourceRect->X = (_frameCount % 5 >= 2 ? 32.0f : 0.0f);
+			_ghosts[i]->_sourceRect->Y = (_ghosts[i]->_direction == UP || _ghosts[i]->_direction == DOWN ? 32.0f : 0.0f);
+			SpriteBatch::Draw(_ghosts[i]->_texture, _ghosts[i]->_position, _ghosts[i]->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, (_ghosts[i]->_direction == LEFT ? SpriteEffect::FLIPHORIZONTAL : (_ghosts[i]->_direction == UP ? SpriteEffect::FLIPVERTICAL : SpriteEffect::NONE))); // Draws Ghost
+		}
 	}
 
-	if (deathStage != 4)
+	if (win)
+	{
+		std::stringstream nameStream;
+		nameStream << "Enter Name: " << name << endl;
+		DrawButton(_toMenu);
+		SpriteBatch::Draw(_gameOverTexture, _gameOverPos, _gameOverSource, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
+		SpriteBatch::DrawString("You Win!", _gameOverStringPos, Color::Red);
+		_gameOverNamePos->X = Graphics::GetViewportWidth() / 2 - 52 - name.length() * 6;
+		SpriteBatch::DrawString(nameStream.str().c_str(), _gameOverNamePos, Color::Red);
+	}
+	else if (deathStage != 4)
 		SpriteBatch::Draw(_ourPac->_texture, _ourPac->_position, _ourPac->_sourceRect, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE); // Draws Pacman over Munchies
 	else
 	{

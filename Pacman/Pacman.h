@@ -173,6 +173,7 @@ private:
 
 	MovingEnemy* _ghosts[GHOSTCOUNT];
 	MovementSequence* _patrolSequence[PATROLSEQUENCECOUNT];
+	Texture2D* _sadTex;
 	void CheckGhostCollisions();
 	void UpdateGhost(MovingEnemy* ghost, int elapsedTime);
 	bool CanMoveGhost(MovingEnemy* ghost);
