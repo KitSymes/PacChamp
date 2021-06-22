@@ -14,6 +14,7 @@
 #define PATROLSEQUENCECOUNT 20
 // Just need to include main header file
 #include "S2D/S2D.h"
+#include <string>
 
 // Reduces the amount of typing by including all classes in S2D namespace
 using namespace S2D;
@@ -193,7 +194,7 @@ private:
 	SoundEffect* _death;
 
 	struct Button {
-		string text;
+		std::string text;
 		Vector2* textPos;
 		Vector2* buttonPos;
 		Rect* sourceRect;
